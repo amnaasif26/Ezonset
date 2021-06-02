@@ -50,7 +50,7 @@
 
 <div class="card-header"><!--- card-header Starts --->
 
-<h5> Available Shopping Balance </h5>
+<h5> Available EzOnset Personal Balance </h5>
 
 </div><!--- card-header Ends --->
 
@@ -68,7 +68,7 @@
 
 <p class="lead mt-2">
 
-Personal Balance - fixmywebsite
+EzOnset Personal Balance - fixmywebsite
 
 <span class="text-success font-weight-bold">$198</span>
 
@@ -107,7 +107,7 @@ Personal Balance - fixmywebsite
 
 <div class="col-11"><!--- col-11 Starts --->
 
-<img src="images/paypal.png" height="50" class="ml-2 width-xs-100">
+<img src="images/payoneer.png" height="50" class="ml-2 width-xs-100">
 
 </div><!--- col-11 Ends --->
 
@@ -183,7 +183,7 @@ Personal Balance - fixmywebsite
 
 <hr>
 
-<h6> Proposal Qty : <span class="float-right"> 2 </span> </h6>
+<h6> Proposal Quantity : <span class="float-right"> 2 </span> </h6>
 
 <hr>
 
@@ -215,7 +215,7 @@ Apply
 
 <h5 class="font-weight-bold">
 
-Proposal Total : <span class="float-right total-price"> $41 </span>
+Total Amount : <span class="float-right total-price"> $41 </span>
 
 </h5>
 
@@ -230,12 +230,12 @@ Proposal Total : <span class="float-right total-price"> $41 </span>
 
 <input type="hidden" name="amount" value="">
 
-<button type="submit" name="checkout_submit_order" class="btn btn-lg btn-success btn-block" onclick="return confirm('Do You Really Want to Order This Proposal From Your Shopping Balance.')">
+<button type="submit" name="checkout_submit_order" class="btn btn-lg btn-success btn-block" onclick="return confirm('Do You Really Want to Order This Proposal From Your EzOnset Personal Balance.')">
 
-Pay With Shopping Balance
+PAY NOW
 
 </button>
-
+<p class="text-muted"> By Clicking on 'PAY NOW', You agree to accept the proposal</p>
 </form><!--- shopping-balance-form Ends --->
 
 <br>
@@ -265,7 +265,7 @@ Pay With Shopping Balance
 
 <button type="submit" name="submit" class="btn btn-lg btn-success btn-block">
 
-Pay With Paypal
+Pay With Payoneer
 
 </button>
 
@@ -291,7 +291,7 @@ data-key="pk_test_6pRNASCoBOKtIshFeQd4XMUh"
 data-amount="4000"
 data-currency="usd"
 data-email="fixmywebsite@gmail.com"
-data-name="computerefever.com"
+data-name="ezonser.com"
 data-image="images/logo.png"
 data-description="I Will Do Viral Youtube Seo Social Media Promotion"
 data-allow-remember-me="false"

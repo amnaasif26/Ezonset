@@ -51,7 +51,7 @@
 
 <div class="card-body"><!--- card-body Starts -->
 
-<h2> fixmywebsite's Offers </h2>
+<h2> Offers </h2>
 
 </div><!--- card-body Ends -->
 
@@ -314,10 +314,120 @@ STARTING AT <strong class="price">$5</strong>
 <div class="card user-reviews mt-4 mb-4 rounded-0"><!--- card user-reviews mt-4 mb-4 rounded-0 Starts -->
 
 <div class="card-header"><!-- card-header Starts -->
+<div class="row"><!-- row Starts -->
+
+<div class="col-md-12"><!-- col-md-12 Starts -->
+
+<div class="card mt-4 mb-4 rounded-0"><!-- card mt-4 mb-4 rounded-0 Starts -->
+
+<div class="card-body"><!--- card-body Starts -->
+
+<h2> Portfolio </h2>
+
+</div><!--- card-body Ends -->
+
+</div><!-- card mt-4 mb-4 rounded-0 Ends -->
+
+</div><!-- col-md-12 Ends -->
+
+</div><!-- row Ends -->
+
+<div class="row"><!-- row Starts -->
+
+<div class="col-lg-4 col-md-6 col-sm-6"><!--- col-lg-4 col-md-6 col-sm-6 Starts --->
+
+<div class="proposal-div"><!-- proposal-div Starts -->
+
+<div class="proposal_nav"><!-- proposal_nav Starts -->
+
+<span class="float-left mt-2"><!-- float-left mt-2 Starts -->
+
+
+
+
+<div class="clearfix mb-2"></div>
+
+</div><!-- proposal_nav Ends -->
+
+<a href="proposals/proposal.php">
+
+<hr class="m-0 p-0">
+
+<img src="images/p1.png" class="resp-img">
+
+</a>
+
+</div><!-- proposal-div Ends -->
+
+</div><!--- col-lg-4 col-md-6 col-sm-6 Ends --->
+
+</div><!-- row Ends -->
+
+<div class="row"><!-- row Starts -->
+
+<div class="col-lg-4 col-md-6 col-sm-6"><!--- col-lg-4 col-md-6 col-sm-6 Starts --->
+
+<div class="proposal-div"><!-- proposal-div Starts -->
+
+<div class="proposal_nav"><!-- proposal_nav Starts -->
+
+<span class="float-left mt-2"><!-- float-left mt-2 Starts -->
+
+
+
+
+<div class="clearfix mb-2"></div>
+
+</div><!-- proposal_nav Ends -->
+
+<a href="proposals/proposal.php">
+
+<hr class="m-0 p-0">
+
+<img src="images/p2.png" class="resp-img">
+
+</a>
+
+</div><!-- proposal-div Ends -->
+
+</div><!--- col-lg-4 col-md-6 col-sm-6 Ends --->
+
+</div><!-- row Ends -->
+
+<div class="row"><!-- row Starts -->
+
+<div class="col-lg-4 col-md-6 col-sm-6"><!--- col-lg-4 col-md-6 col-sm-6 Starts --->
+
+<div class="proposal-div"><!-- proposal-div Starts -->
+
+<div class="proposal_nav"><!-- proposal_nav Starts -->
+
+<span class="float-left mt-2"><!-- float-left mt-2 Starts -->
+
+
+
+
+<div class="clearfix mb-2"></div>
+
+</div><!-- proposal_nav Ends -->
+
+<a href="proposals/proposal.php">
+
+<hr class="m-0 p-0">
+
+<img src="images/p3.png" class="resp-img">
+
+</a>
+
+</div><!-- proposal-div Ends -->
+
+</div><!--- col-lg-4 col-md-6 col-sm-6 Ends --->
+
+</div><!-- row Ends -->
 
 <h4><!-- h4 Starts -->
 
-fixmywebsite Reviews
+Reviews
 
 <img class="rating" src="images/user_rate_full_big.png">
 

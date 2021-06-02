@@ -44,7 +44,7 @@
 
 <p class="lead mt-1 mb-1">
 
-<strong> Warning ! </strong>
+<strong style="color: red"> Warning ! </strong>
 
 You do not submit a support request, without logging in to this website.
 
@@ -63,19 +63,20 @@ You do not submit a support request, without logging in to this website.
 
 <div class="card"><!-- card Starts -->
 
-<div class="card-header text-center "><!--- card-header text-center  Starts --->
+<div class="card-header text-center"><!--- card-header text-center  Starts --->
 
-<h2> Submit A Request </h2>
+<h2> SUBMIT A REQUEST </h2>
 
 <p class="text-muted">
 
-If you have any questions, pease feel free to contact us, Our customer service center is working for you 24/7.
+If you have any questions, pease feel free to contact us
 
 </p>
-
+<p class="text-muted">
+	We are here to help you 24/7. Our Customer Support Agent Will Get Back To You Soon.
 </div><!--- card-header text-center Ends --->
 
-<div class="card-body"><!-- card-body Starts -->
+<div class="card-body" style="background-color:#ffae42"><!-- card-body Starts -->
 
 <center><!--- center Starts --->
 
@@ -133,7 +134,7 @@ If you have any questions, pease feel free to contact us, Our customer service c
 
 <div class="form-group"><!--- form-group Starts -->
 
-<label class="float-left"> Order Rule * </label>
+<label class="float-left"> Select Your Role * </label>
 
 <select name="order_rule" class="form-control " required><!--- form-control Starts -->
 
@@ -150,26 +151,19 @@ If you have any questions, pease feel free to contact us, Our customer service c
 
 <div class="form-group"><!--- form-group Starts -->
 
-<label class="float-left"> Attachment </label>
+<label class="float-left"> Add An Attachment, If Required. </label>
 
 <input type="file" class="form-control" name="file">
 
 </div><!--- form-group Ends -->
 
 
-<div class="form-group"><!--- form-group Starts -->
-
-<label> Please Verify That You Are Human </label>
-
-<div class="g-recaptcha" data-sitekey="6LdYDDoUAAAAAI5x9qmdNzycZljEhFqgtPhtFbj7"></div>
-
-</div><!--- form-group Ends -->
 
 <div class="text-center"><!-- text-center Starts -->
 
 <button type="submit" name="submit" class="btn btn-primary btn-lg">
 
-<i class="fa fa-user-md"></i> Send Message
+Submit your query
 
 </button>
 
