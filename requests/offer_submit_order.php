@@ -1,3 +1,107 @@
+<?php
+
+session_start();
+
+include("../includes/db.php");
+
+if(!isset($_SESSION['seller_user_name'])){
+	
+echo "<script>window.open('../login.php','_self')</script>";
+	
+}
+
+$login_seller_user_name = $_SESSION['seller_user_name'];
+
+$select_login_seller = "select * from sellers where seller_user_name='$login_seller_user_name'";
+
+$run_login_seller = mysqli_query($con,$select_login_seller);
+
+$row_login_seller = mysqli_fetch_array($run_login_seller);
+
+$login_seller_id = $row_login_seller['seller_id'];
+
+$login_seller_email = $row_login_seller['seller_email'];
+
+
+$get_payment_settings = "select * from payment_settings";
+
+$run_payment_setttings = mysqli_query($con,$get_payment_settings);
+
+$row_payment_settings = mysqli_fetch_array($run_payment_setttings);
+
+$processing_fee = $row_payment_settings['processing_fee'];
+
+$enable_paypal = $row_payment_settings['enable_paypal'];
+
+$paypal_email = $row_payment_settings['paypal_email'];
+
+$paypal_currency_code = $row_payment_settings['paypal_currency_code'];
+
+$paypal_sandbox = $row_payment_settings['paypal_sandbox'];
+
+if($paypal_sandbox == "on"){
+	
+$paypal_url = "https://www.sandbox.paypal.com/cgi-bin/webscr";
+	
+}elseif($paypal_sandbox == "off"){
+	
+$paypal_url = "https://www.paypal.com/cgi-bin/webscr";	
+	
+}
+
+$enable_stripe = $row_payment_settings['enable_stripe'];
+
+
+$get_seller_accounts = "select * from seller_accounts where seller_id='$login_seller_id'";
+
+$run_seller_accounts = mysqli_query($con,$get_seller_accounts);
+
+$row_seller_accounts = mysqli_fetch_array($run_seller_accounts);
+
+$current_balance = $row_seller_accounts['current_balance'];
+
+$offer_id = $_POST['offer_id'];
+
+$request_id = $_POST['request_id'];
+
+
+$select_offers = "select * from send_offers where offer_id='$offer_id'";
+
+$run_offers = mysqli_query($con,$select_offers);
+
+$row_offers = mysqli_fetch_array($run_offers);
+
+$proposal_id = $row_offers['proposal_id'];
+
+$description = $row_offers['description'];
+
+$delivery_time = $row_offers['delivery_time'];
+
+$amount = $row_offers['amount'];
+
+$total = $amount+$processing_fee;
+
+
+$get_requests = "select * from buyer_requests where request_id='$request_id'";
+
+$run_requests = mysqli_query($con,$get_requests);
+
+$row_requests = mysqli_fetch_array($run_requests);
+
+$request_description = $row_requests['request_description'];
+
+
+$select_proposals = "select * from proposals where proposal_id='$proposal_id'";
+
+$run_proposals = mysqli_query($con, $select_proposals);
+
+$row_proposals = mysqli_fetch_array($run_proposals);
+
+$proposal_title = $row_proposals['proposal_title'];
+
+
+
+?>
 
 <div id="offer-order-modal" class="modal fade"><!-- offer-order-modal modal fade Starts -->
 
@@ -31,7 +135,7 @@ THIS ORDER IS RELATED TO THE FOLLOWING REQUEST:
 
 <p>
 
-"Please quote for a platform exactly like EzOnset.com"
+"<?php echo $request_description; ?>"
 
 </p>
 
@@ -46,20 +150,20 @@ View Offer <i class="fa fa-caret-down"></i>
 <div class="offer-div"><!-- offer-div Starts -->
 
 <h4>
-I Will Do Web Development In Laravel And Codeignite
+<?php echo $proposal_title; ?>
 
-<span class="price float-right"> $100 </span>
+<span class="price float-right"> $<?php echo $amount; ?> </span>
 
 </h4>
 
 <p>
-I have a complete freelancing theme same like EzOnset.com which has been made in php&mysqli with bootstrap 4 and I can provide it to you in 100$ only. I am sending you its demo url so you can see it yourself.
+<?php echo $description; ?>
 
 </p>
 
 <p>
 <strong> <i class="fa fa-clock-o"></i> Delivery Time: </strong>
-3 Days
+<?php echo $delivery_time; ?>
 </p>
 
 </div><!-- offer-div Ends -->
@@ -67,6 +171,8 @@ I have a complete freelancing theme same like EzOnset.com which has been made in
 </div><!-- order-details Ends -->
 
 <div class="payment-options-list"><!-- payment-options-list Starts -->
+
+<?php if($current_balance >= $amount){ ?>
 
 <div class="payment-option mb-2"><!-- payment-option mb-2 Starts -->
 
@@ -78,17 +184,37 @@ I have a complete freelancing theme same like EzOnset.com which has been made in
 
 <p class="lead ml-5">
 
-Personal Balance - fixmywebsite <span class="text-success font-weight-bold"> $198 </span>
+Personal Balance - <?php echo $login_seller_user_name; ?> <span class="text-success font-weight-bold"> $<?php echo $current_balance; ?> </span>
 
 </p>
 
 </div><!-- payment-option mb-2 Ends -->
 
+<?php If($enable_paypal == "yes" or $enable_stripe == "yes"){ ?>
+
 <hr>
+
+<?php } ?>
+
+
+<?php } ?>
+
+
+<?php if($enable_paypal == "yes"){ ?>
 
 <div class="payment-option"><!-- payment-option Starts -->
 
-<input type="radio" name="payment_option" id="paypal" class="radio-custom">
+<input type="radio" name="payment_option" id="paypal" class="radio-custom"
+<?php
+
+if($current_balance < $amount){
+	
+echo "checked";
+	
+}
+
+?>
+>
 
 <label for="paypal" class="radio-custom-label"></label>
 
@@ -96,18 +222,41 @@ Personal Balance - fixmywebsite <span class="text-success font-weight-bold"> $19
 
 </div><!-- payment-option Ends -->
 
+<?php } ?>
+
+<?php if($enable_stripe == "yes"){ ?>
+
+<?php if($enable_paypal == "yes"){ ?>
 
 <hr>
 
+<?php } ?>
+
 <div class="payment-option"><!-- payment-option Starts -->
 
-<input type="radio" name="payment_option" id="credit-card" class="radio-custom">
+<input type="radio" name="payment_option" id="credit-card" class="radio-custom"
+<?php
+
+if($current_balance < $amount){
+	
+if($enable_paypal == "no"){
+	
+echo "checked";
+	
+}
+	
+}
+
+?>
+>
 
 <label for="credit-card" class="radio-custom-label"></label>
 
 <img src="../images/credit_cards.jpg">
 
 </div><!-- payment-option Ends -->
+
+<?php } ?>
 
 </div><!-- payment-options-list Ends -->
 
@@ -117,12 +266,13 @@ Personal Balance - fixmywebsite <span class="text-success font-weight-bold"> $19
 
 <button class="btn btn-secondary" data-dismiss="modal"> Close </button>
 
+<?php if($current_balance >= $amount){ ?>
 
 <form action="../shopping_balance.php" method="post" id="shopping-balance-form"><!--- shopping-balance-form Starts --->
 
-<input type="hidden" name="offer_id" value="">
+<input type="hidden" name="offer_id" value="<?php echo $offer_id; ?>">
 
-<input type="hidden" name="amount" value="">
+<input type="hidden" name="amount" value="<?php echo $amount; ?>">
 
 <button type="submit" name="view_offers_submit_order" class="btn btn-success" onclick="return confirm('Do You Really Want to Order This Offer From Your Shopping Balance.')">
 
@@ -134,25 +284,30 @@ Pay With Shopping Balance
 
 <br>
 
-<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" id="paypal-form"><!--- paypal-form Starts --->
+<?php } ?>
+
+
+<?php if($enable_paypal == "yes"){ ?>
+
+<form action="<?php echo $paypal_url; ?>/cgi-bin/webscr" method="post" id="paypal-form"><!--- paypal-form Starts --->
 
 <input type="hidden" name="cmd" value="_xclick">
 
-<input type="hidden" name="business" value="sad.ahmed22224@gmail.com">
+<input type="hidden" name="business" value="<?php echo $paypal_email; ?>">
 
-<input type="hidden" name="tax" value="1">
+<input type="hidden" name="tax" value="<?php echo $processing_fee; ?>">
 
-<input type="hidden" name="currency_code" value="USD">
+<input type="hidden" name="currency_code" value="<?php echo $paypal_currency_code; ?>">
 
-<input type="hidden" name="cancel_return" value="http://localhost/freelance/requests/view_offers.php">
+<input type="hidden" name="cancel_return" value="<?php echo $site_url; ?>/requests/view_offers.php">
 
-<input type="hidden" name="return" value="http://localhost/freelance/paypal_order.php?view_offers=1?offer_id=">
+<input type="hidden" name="return" value="<?php echo $site_url; ?>/paypal_order.php?view_offers=1?offer_id=<?php echo $offer_id; ?>">
 
-<input type="hidden" name="item_name" value="I Will Do Viral Youtube Seo Social Media Promotion">
+<input type="hidden" name="item_name" value="<?php echo $proposal_title; ?>">
 
 <input type="hidden" name="item_number" value="1">
 
-<input type="hidden" name="amount" value="10">
+<input type="hidden" name="amount" value="<?php echo $amount; ?>">
 
 <input type="hidden" name="quantity" value="1">
 
@@ -167,24 +322,37 @@ Pay With Paypal
 </form><!--- paypal-form Ends --->
 
 
+<?php } ?>
+
+
+<?php if($enable_stripe == "yes"){ ?>
+
+<?php
+
+include("../stripe_config.php");
+
+$stripe_total_amount = $total * 100;
+
+?>
+
 <form action="offer_charge.php" method="post" id="credit-card-form"><!--- credit-card-form Starts --->
 
-<input type="hidden" name="offer_id" value="">
+<input type="hidden" name="offer_id" value="<?php echo $offer_id; ?>">
 
-<input type="hidden" name="amount" value="">
+<input type="hidden" name="amount" value="<?php echo $stripe_total_amount; ?>">
 
 <input
 type="submit"
 class="btn btn-success stripe-submit"
 value="Pay With Credit Card"
 data-dismiss="modal"
-data-key="pk_test_6pRNASCoBOKtIshFeQd4XMUh"
-data-amount="1100"
-data-currency="usd"
-data-email="fixmywebsite@gmail.com"
+data-key="<?php echo $stripe['publishable_key']; ?>"
+data-amount="<?php echo $stripe_total_amount; ?>"
+data-currency="<?php echo $stripe['currency_code']; ?>"
+data-email="<?php echo $login_seller_email; ?>"
 data-name="computerefever.com"
 data-image="../images/logo.png"
-data-description="I Will Do Viral Youtube Seo Social Media Promotion"
+data-description="<?php echo $proposal_title; ?>"
 data-allow-remember-me="false"
 
 >
@@ -208,6 +376,8 @@ $(document).ready(function() {
 </script>
 
 </form><!--- credit-card-form Ends --->
+
+<?php } ?>
 
 </div><!-- modal-footer Ends -->
 
@@ -240,9 +410,48 @@ $(document).ready(function(){
 		
 	});
 	
+	<?php if($current_balance >= $amount){ ?>
+	
 	$('#paypal-form').hide();
 	
+	$('#credit-card-form').hide();
+	
+	<?php }else{ ?>
+
+		$('#shopping-balance-form').hide();
+	
+	<?php } ?>
+	
+			<?php if($current_balance < $amount){ ?>
+	
+<?php if($enable_paypal == "yes"){ ?>
+	
+<?php }else{ ?>	
+
+$('#paypal-form').hide();
+
+<?php } ?>
+	
+<?php } ?>
+
+
+<?php if($current_balance < $amount){ ?>
+
+<?php if($enable_stripe == "yes"){ ?>
+
+<?php if($enable_paypal == "yes"){ ?>
+
 $('#credit-card-form').hide();
+
+<?php }else{ ?>
+
+
+<?php } ?>
+
+<?php } ?>
+
+<?php } ?>
+	
 	
 	
 $('#shopping-balance').click(function(){

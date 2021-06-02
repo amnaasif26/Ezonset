@@ -1,14 +1,39 @@
+<?php
+
+session_start();
+
+include("../includes/db.php");
+
+if(!isset($_SESSION['seller_user_name'])){
+	
+echo "<script>window.open('../login.php','_self')</script>";
+	
+}
+
+$login_seller_user_name = $_SESSION['seller_user_name'];
+
+$select_login_seller = "select * from sellers where seller_user_name='$login_seller_user_name'";
+
+$run_login_seller = mysqli_query($con,$select_login_seller);
+
+$row_login_seller = mysqli_fetch_array($run_login_seller);
+
+$login_seller_id = $row_login_seller['seller_id'];
+
+
+?>
+
 <!DOCTYPE html>
 
 <html>
 
 <head>
 
-<title> EzOnset / Post A New Request </title>
+<title> ezonset / Post A New Request </title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<meta name="author" content="EzOnset">
+<meta name="author" content="Mohammed Tahir Ahmed">
 
 <link href="http://fonts.googleapis.com/css?family=Roboto:400,500,700,300,100" rel="stylesheet" >
 
@@ -17,6 +42,10 @@
 <link href="../styles/style.css" rel="stylesheet">
 
 <link href="../styles/user_nav_style.css" rel="stylesheet">
+
+<!--- stylesheet width modifications --->
+
+<link href="../styles/custom.css" rel="stylesheet">
 
 <link href="../font-awesome/css/font-awesome.min.css" rel="stylesheet">
 
@@ -64,7 +93,7 @@
 
 <div class="form-group"><!-- form-group Starts -->
 
-<textarea name="request_textarea" id="textarea" rows="5" cols="73" maxlength="380" class="form-control" placeholder="Request Description" required></textarea>
+<textarea name="request_description" id="textarea" rows="5" cols="73" maxlength="380" class="form-control" placeholder="Request Description" required></textarea>
 
 </div><!-- form-group Ends -->
 
@@ -111,7 +140,23 @@
 
 <option value="" class="hidden"> Select A Category </option>
 
-<option value="1">  Graphics & Design </option>
+<?php 
+
+$get_cats = "select * from categories";
+
+$run_cats = mysqli_query($con,$get_cats);
+
+while($row_cats = mysqli_fetch_array($run_cats)){
+
+$cat_id = $row_cats['cat_id'];
+
+$cat_title = $row_cats['cat_title'];
+
+?>
+
+<option value="<?php echo $cat_id; ?>"> <?php echo $cat_title; ?> </option>
+
+<?php } ?>
 
 </select>
 
@@ -122,8 +167,6 @@
 <select class="form-control" name="child_id" id="sub-category" required>
 
 <option value="" class="hidden"> Select A Sub Category </option>
-
-<option value="1">  Logo Design </option>
 
 </select>
 
@@ -149,35 +192,29 @@
 
 <div class="col-md-11 col-sm-12 mt-3"><!-- col-md-11 col-sm-12 mt-3 Starts -->
 
-<label class="custom-control custom-radio"><!-- custom-control custom-radio Starts -->
+<?php
 
-<input type="radio" value="1" name="delivery_time" class="custom-control-input" required >
+$get_delivery_times = "select * from delivery_times";
 
-<span class="custom-control-indicator"></span>
+$run_delivery_times = mysqli_query($con,$get_delivery_times);
 
-<span class="custom-control-description"> 1 Day </span>
+while($row_delivery_times = mysqli_fetch_array($run_delivery_times)){
 
-</label><!-- custom-control custom-radio Ends -->
+$delivery_proposal_title = $row_delivery_times['delivery_proposal_title'];
 
-<label class="custom-control custom-radio"><!-- custom-control custom-radio Starts -->
-
-<input type="radio" value="2" name="delivery_time" class="custom-control-input" required >
-
-<span class="custom-control-indicator"></span>
-
-<span class="custom-control-description"> 2 Days </span>
-
-</label><!-- custom-control custom-radio Ends -->
+?>
 
 <label class="custom-control custom-radio"><!-- custom-control custom-radio Starts -->
 
-<input type="radio" value="3" name="delivery_time" class="custom-control-input" required >
+<input type="radio" value="<?php echo $delivery_proposal_title; ?>" name="delivery_time" class="custom-control-input" required >
 
 <span class="custom-control-indicator"></span>
 
-<span class="custom-control-description"> 3 Days </span>
+<span class="custom-control-description"> <?php echo $delivery_proposal_title; ?> </span>
 
 </label><!-- custom-control custom-radio Ends -->
+
+<?php } ?>
 
 </div><!-- col-md-11 col-sm-12 mt-3 Ends -->
 
@@ -232,12 +269,76 @@ $("#category").change(function(){
 	
 $("#sub-category").show();	
 	
+
+var category_id = $(this).val();
+	
+$.ajax({
+	
+url:"fetch_subcategory.php",
+	
+method:"POST",
+
+data:{category_id:category_id},
+
+success:function(data){
+	
+$("#sub-category").html(data);
+	
+}
+	
+});
+	
+	
 });
 	
 });
 
 
 </script>
+
+<?php
+
+if(isset($_POST['submit'])){
+	
+$request_title = mysqli_real_escape_string($con,$_POST['request_title']);
+	
+$request_description = mysqli_real_escape_string($con,$_POST['request_description']);
+	
+$cat_id = mysqli_real_escape_string($con,$_POST['cat_id']);
+	
+$child_id = mysqli_real_escape_string($con,$_POST['child_id']);
+	
+$request_budget = mysqli_real_escape_string($con,$_POST['request_budget']);
+	
+$delivery_time = mysqli_real_escape_string($con,$_POST['delivery_time']);
+	
+
+$request_file = $_FILES['request_file']['name'];
+
+$request_file_tmp = $_FILES['request_file']['tmp_name'];
+
+$request_date = date("F d, Y");
+	
+move_uploaded_file($request_file_tmp,"request_files/$request_file");
+	
+$insert_request = "insert into buyer_requests (seller_id,cat_id,child_id,request_title,request_description,request_file,delivery_time,request_budget,request_date,request_status) values ('$login_seller_id','$cat_id','$child_id','$request_title','$request_description','$request_file','$delivery_time','$request_budget','$request_date','pending')";	
+
+$run_request = mysqli_query($con,$insert_request);
+
+
+if($run_request){
+	
+echo "<script>alert('Request has been inserted successfully.');</script>";
+	
+echo "<script>window.open('manage_requests.php','_self')</script>";
+	
+}
+
+
+	
+}
+
+?>
 
 <?php include("../includes/footer.php"); ?>
 

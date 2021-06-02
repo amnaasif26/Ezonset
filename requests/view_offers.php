@@ -1,14 +1,88 @@
+<?php
+
+session_start();
+
+include("../includes/db.php");
+
+if(!isset($_SESSION['seller_user_name'])){
+	
+echo "<script>window.open('../login.php','_self')</script>";
+	
+}
+
+$login_seller_user_name = $_SESSION['seller_user_name'];
+
+$select_login_seller = "select * from sellers where seller_user_name='$login_seller_user_name'";
+
+$run_login_seller = mysqli_query($con,$select_login_seller);
+
+$row_login_seller = mysqli_fetch_array($run_login_seller);
+
+$login_seller_id = $row_login_seller['seller_id'];
+
+$request_id = $_GET['request_id'];
+
+
+$get_requests = "select * from buyer_requests where request_id='$request_id' AND request_status='active'";
+
+$run_requests = mysqli_query($con,$get_requests);
+
+$row_requests = mysqli_fetch_array($run_requests);
+
+$request_id = $row_requests['request_id'];
+
+$cat_id = $row_requests['cat_id'];
+
+$child_id = $row_requests['child_id'];
+
+$request_description = $row_requests['request_description'];
+
+$request_date = $row_requests['request_date'];
+
+$request_budget = $row_requests['request_budget'];
+
+$request_delivery_time = $row_requests['delivery_time'];
+
+
+$get_cats = "select * from categories where cat_id='$cat_id'";
+
+$run_cats = mysqli_query($con,$get_cats);
+
+$row_cats = mysqli_fetch_array($run_cats);
+
+$cat_title = $row_cats['cat_title'];
+
+
+$get_c_cats = "select * from categories_childs where child_id='$child_id'";
+
+$run_c_cats = mysqli_query($con,$get_c_cats);
+
+$row_c_cats = mysqli_fetch_array($run_c_cats);
+
+$child_title = $row_c_cats['child_title'];
+
+
+$select_offers = "select * from send_offers where request_id='$request_id' AND status='active'";
+
+$run_offers = mysqli_query($con,$select_offers);
+
+$count_offers = mysqli_num_rows($run_offers);
+
+
+
+?>
+
 <!DOCTYPE html>
 
 <html>
 
 <head>
 
-<title> EzOnset / View Request Offers </title>
+<title> ezonset / View Request Offers </title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<meta name="author" content="EzOnset">
+<meta name="author" content="Mohammed Tahir Ahmed">
 
 <link href="http://fonts.googleapis.com/css?family=Roboto:400,500,700,300,100" rel="stylesheet" >
 
@@ -17,6 +91,10 @@
 <link href="../styles/style.css" rel="stylesheet">
 
 <link href="../styles/user_nav_style.css" rel="stylesheet">
+
+<!--- stylesheet width modifications --->
+
+<link href="../styles/custom.css" rel="stylesheet">
 
 <link href="../font-awesome/css/font-awesome.min.css" rel="stylesheet">
 
@@ -34,7 +112,7 @@
 
 <div class="row view-offers"><!-- row view-offers Starts -->
 
-<h2 class="mb-3 ml-3"> View Offers (1) </h2>
+<h2 class="mb-3 ml-3"> View Offers (<?php echo $count_offers; ?>) </h2>
 
 <div class="col-md-12"><!-- col-md-12 Starts -->
 
@@ -46,19 +124,19 @@
 
 <p class="offer-p">
 
-Please quote for a platform exactly like EzOnset.com
+<?php echo $request_description; ?>
 
 </p>
 
 <p class="offer-p">
 
-<i class="fa fa-usd"></i> <span> Request Budget: </span> $40 |
+<i class="fa fa-usd"></i> <span> Request Budget: </span> $<?php echo $request_budget; ?> |
 
-<i class="fa fa-clock-o"></i> <span> Request Date: </span> December 14th, 2020 |
+<i class="fa fa-clock-o"></i> <span> Request Date: </span> <?php echo $request_date; ?> |
 
-<i class="fa fa-clock-o"></i> <span> Request Duration: </span>  3 Days Delivery  |
+<i class="fa fa-clock-o"></i> <span> Request Duration: </span>  <?php echo $request_delivery_time; ?> Delivery  |
 
-<i class="fa fa-archive"></i> <span> Request Category: </span> Programming & Tech / Web Programming |
+<i class="fa fa-archive"></i> <span> Request Category: </span> <?php echo $cat_title; ?> / <?php echo $child_title; ?> |
 
 </p>
 
@@ -66,15 +144,66 @@ Please quote for a platform exactly like EzOnset.com
 
 </div><!-- card mb-4 rounded-0 Ends -->
 
+<?php if($count_offers == "0"){ ?>
+
 <div class="card rounded-0 mb-3"><!-- card rounded-0 mb-3 Starts -->
 
 <div class="card-body"><!-- card-body Starts -->
 
-<h2 class="text-center"> Your Request Still Not Received Offers, Please Wait </h2>
+<h2 class="text-center"> Your Request Still Has Not Received Any Offer, Please Wait </h2>
 
 </div><!-- card-body Ends -->
 
 </div><!-- card rounded-0 mb-3 Ends -->
+
+<?php }else{ ?>
+
+<?php 
+
+while($row_offers = mysqli_fetch_array($run_offers)){
+
+$offer_id = $row_offers['offer_id'];
+
+$proposal_id = $row_offers['proposal_id'];
+
+$description = $row_offers['description'];
+
+$delivery_time = $row_offers['delivery_time'];
+
+$amount = $row_offers['amount'];
+
+$sender_id = $row_offers['sender_id'];
+
+
+$select_sender = "select * from sellers where seller_id='$sender_id'";
+
+$run_sender = mysqli_query($con,$select_sender);
+
+$row_sender = mysqli_fetch_array($run_sender);
+
+$sender_user_name = $row_sender['seller_user_name'];
+
+$sender_level = $row_sender['seller_level'];
+
+$sender_image = $row_sender['seller_image'];
+
+$sender_status = $row_sender['seller_status'];
+
+
+$select_proposals = "select * from proposals where proposal_id='$proposal_id'";
+
+$run_proposals = mysqli_query($con, $select_proposals);
+
+$row_proposals = mysqli_fetch_array($run_proposals);
+
+$proposal_title = $row_proposals['proposal_title'];
+
+$proposal_url = $row_proposals['proposal_url'];
+
+$proposal_img1 = $row_proposals['proposal_img1'];
+
+
+?>
 
 <div class="card rounded-0 mb-3"><!-- card rounded-0 mb-3 Starts -->
 
@@ -84,7 +213,7 @@ Please quote for a platform exactly like EzOnset.com
 
 <div class="col-md-2"><!-- col-md-2 Starts -->
 
-<img src="../proposals/proposal_files/web-development.jpg" class="img-fluid" >
+<img src="../proposals/proposal_files/<?php echo $proposal_img1; ?>" class="img-fluid" >
 
 </div><!-- col-md-2 Ends -->
 
@@ -92,21 +221,21 @@ Please quote for a platform exactly like EzOnset.com
 
 <h5 class="mt-md-0 mt-2"><!-- mt-md-0 mt-2 Starts -->
 
-<a href="../proposals/proposal.php"> I Will Do Web Development In Laravel And Codeignite </a>
+<a href="../proposals/<?php echo $proposal_url; ?>"> <?php echo $proposal_title; ?> </a>
 
 </h5><!-- mt-md-0 mt-2 Ends -->
 
 <p class="mb-1">
 
-I have a complete freelancing theme same like EzOnset.com which has been made in php&mysqli with bootstrap 4 and I can provide it to you in 100$ only. I am sending you its demo url so you can see it yourself.
+<?php echo $description; ?>
 
 </p>
 
 <p class="offer-p text-muted">
 
-<i class="fa fa-usd"></i> Offer Budget: <span class="font-weight-normal"> $100 </span>
+<i class="fa fa-usd"></i> Offer Budget: <span class="font-weight-normal"> $<?php echo $amount; ?> </span>
 
-<i class="fa fa-clock-o"></i> Offer Duration: <span class="font-weight-normal"> 3 Days </span>
+<i class="fa fa-clock-o"></i> Offer Duration: <span class="font-weight-normal"> <?php echo $delivery_time; ?> </span>
 
 </p>
 
@@ -116,9 +245,29 @@ I have a complete freelancing theme same like EzOnset.com which has been made in
 
 <div class="offer-seller-picture"><!-- offer-seller-picture Starts -->
 
-<img src="../user_images/salman.jpg" class="rounded-circle" >
+<?php if(!empty($sender_image)){ ?>
+
+<img src="../user_images/<?php echo $sender_image; ?>" class="rounded-circle" >
+
+<?php }else{ ?>
+
+<img src="../user_images/empty-image.png" class="rounded-circle" >
+
+<?php } ?>
+
+<?php if($sender_level == 2){ ?>
 
 <img src="../images/level_badge_1.png" class="level-badge" >
+
+<?php }elseif($sender_level == 3){ ?>
+
+<img src="../images/level_badge_2.png" class="level-badge" >
+
+<?php }elseif($sender_level == 4){ ?>
+
+<img src="../images/level_badge_3.png" class="level-badge" >
+
+<?php } ?>
 
 </div><!-- offer-seller-picture Ends -->
 
@@ -126,25 +275,25 @@ I have a complete freelancing theme same like EzOnset.com which has been made in
 
 <p class="font-weight-bold mb-1"><!-- font-weight-bold mb-1 Starts -->
 
-Salman <small class="text-success"> Online </small>
+<?php echo $sender_user_name; ?> <small class="text-success"> <?php echo $sender_status; ?> </small>
 
 </p><!-- font-weight-bold mb-1 Ends -->
 
 <p class="user-link">
 
-<a href="user.php" target="blank"> User Profile </a>
+<a href="<?php echo $sender_user_name; ?>" target="blank"> User Profile </a>
 
 </p>
 
 </div><!-- offer-seller mb-4 Ends -->
 
-<a href="#" class="btn btn-sm btn-success rounded-0">
+<a href="../conversations/message.php?seller_id=<?php echo $sender_id; ?>&offer_id=<?php echo $offer_id; ?>" class="btn btn-sm btn-success rounded-0">
 
 Contact Now
 
 </a>
 
-<button id="order-button-1" class="btn btn-sm btn-success rounded-0">
+<button id="order-button-<?php echo $offer_id; ?>" class="btn btn-sm btn-success rounded-0">
 
 Order Now
 
@@ -156,11 +305,11 @@ Order Now
 
 <script>
 
-$("#order-button-1").click(function(){
+$("#order-button-<?php echo $offer_id; ?>").click(function(){
 
-request_id = "";
+request_id = "<?php echo $request_id; ?>";
 
-offer_id = "";
+offer_id = "<?php echo $offer_id; ?>";
 
 $.ajax({
 	method: "POST",
@@ -180,6 +329,11 @@ $.ajax({
 </div><!-- card-body Ends -->
 
 </div><!-- card rounded-0 mb-3 Ends -->
+
+<?php } ?>
+
+
+<?php } ?>
 
 </div><!-- col-md-12 Ends -->
 

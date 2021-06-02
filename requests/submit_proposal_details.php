@@ -1,3 +1,62 @@
+<?php
+
+session_start();
+
+include("../includes/db.php");
+
+if(!isset($_SESSION['seller_user_name'])){
+	
+	echo "<script>window.open('../login.php','_self')</script>";
+	
+}
+
+$login_seller_user_name = $_SESSION['seller_user_name'];
+
+$select_login_seller = "select * from sellers where seller_user_name='$login_seller_user_name'";
+
+$run_login_seller = mysqli_query($con,$select_login_seller);
+
+$row_login_seller = mysqli_fetch_array($run_login_seller);
+
+$login_seller_id = $row_login_seller['seller_id'];
+
+$proposal_id = $_POST['proposal_id'];
+
+$request_id = $_POST['request_id'];
+
+
+$get_requests = "select * from buyer_requests where request_id='$request_id'";
+
+$run_requests = mysqli_query($con,$get_requests);
+
+$row_requets = mysqli_fetch_array($run_requests);
+
+$request_title = $row_requets['request_title'];
+
+$request_description = $row_requets['request_description'];
+
+$request_seller_id = $row_requets['seller_id'];
+
+
+$select_request_seller = "select * from sellers where seller_id='$request_seller_id'";
+
+$run_requets_seller = mysqli_query($con,$select_request_seller);
+
+$row_requets_seller = mysqli_fetch_array($run_requets_seller);
+
+$request_seller_image = $row_requets_seller['seller_image'];
+
+
+$get_proposals = "select * from proposals where proposal_status='active' AND proposal_seller_id='$login_seller_id' AND proposal_id='$proposal_id'";
+
+$run_proposals = mysqli_query($con,$get_proposals);
+
+$row_proposals = mysqli_fetch_array($run_proposals);
+
+$proposal_title = $row_proposals['proposal_title'];
+
+?>
+
 
 <div class="modal-content"><!--- modal-content Starts --->
 
@@ -13,13 +72,21 @@
 
 <div class="request-summary"><!--- request-summary Starts --->
 
-<img src="http://localhost/freelance/user_images/brock.jpg" width="50" height="50" class="rounded-circle">
+<?php if(!empty($request_seller_image)){ ?>
+
+<img src="<?php echo $site_url; ?>/user_images/<?php echo $request_seller_image; ?>" width="50" height="50" class="rounded-circle">
+
+<?php }else{ ?>
+
+<img src="<?php echo $site_url; ?>/user_images/empty-image.png" width="50" height="50" class="rounded-circle">
+
+<?php } ?>
 
 <div id="request-description"><!--- request-description Starts --->
 
-<h6 class="text-primary mb-1"> Script Writing </h6>
+<h6 class="text-primary mb-1"> <?php echo $request_title; ?> </h6>
 
-<p> I Need A Programmer To Write Me A Script. </p>
+<p> <?php echo $request_description; ?> </p>
 
 </div><!--- request-description Ends --->
 
@@ -29,13 +96,13 @@
 
 <div class="selected-proposal p-3"><!--- selected-proposal p-3 Starts --->
 
-<h5> I Will Do Viral Youtube Seo Social Media Promotion </h5>
+<h5> <?php echo $proposal_title; ?> </h5>
 
 <hr>
 
-<input type="hidden" name="proposal_id" value="">
+<input type="hidden" name="proposal_id" value="<?php echo $proposal_id; ?>">
 
-<input type="hidden" name="request_id" value="">
+<input type="hidden" name="request_id" value="<?php echo $request_id; ?>">
 
 <div class="form-group"><!--- form-group Starts --->
 
@@ -53,11 +120,21 @@
 
 <select class="form-control float-right" name="delivery_time">
 
-<option value="1 Day"> 1 Day </option>
+<?php 
 
-<option value="2 Days"> 2 Days </option>
+$get_delivery_times = "select * from delivery_times";
 
-<option value="3 Days"> 3 Days </option>
+$run_delivery_times = mysqli_query($con,$get_delivery_times);
+
+while($row_delivery_times = mysqli_fetch_array($run_delivery_times)){
+	
+$delivery_proposal_title = $row_delivery_times['delivery_proposal_title'];
+	
+echo "<option value='$delivery_proposal_title'> $delivery_proposal_title </option>";
+	
+}
+
+?>
 
 </select>
 
@@ -119,7 +196,7 @@ event.preventDefault();
 $.ajax({
 	
 method: "POST",
-url: "http://localhost/freelance/requests/insert_offer.php",
+url: "<?php echo $site_url; ?>/requests/insert_offer.php",
 data: $('#proposal-details-form').serialize()
 
 })
